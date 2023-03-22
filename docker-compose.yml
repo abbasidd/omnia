@@ -1,51 +1,8 @@
 version: '3'
 services:
-  geth:
-    container_name: geth.local
-    build:
-      context: "."
-      dockerfile: "docker/geth/Dockerfile"
-    ports:
-      - "8545:8545"
-      - "30303:30303"
-    volumes:
-      # - "./docker/geth/data:/home/geth/data"
-      - "./docker/geth/config:/home/geth/config"
-      - "./docker/keystore:/home/geth/keystore"
-    command:
-      - "--datadir=/home/geth/data"
-      - "--keystore=/home/geth/keystore"
-      - "--password=/home/geth/keystore/password"
-      - "--allow-insecure-unlock"
-      - "--unlock=0x1bb90cde8a032cb4963813a5b4db4981afa5b9c6,0xfadad77b3a7e5a84a1f7ded081e785585d4ffaf3,0x3980aa37f838bec2e457445d943feb3af98ff036"
-      - "--networkid=99"
-      - "--lightkdf"
-      - "--nodiscover"
-      - "--maxpeers=0"
-      - "--port=0"
-      - "--nousb"
-      - "--ipcdisable"
-      - "--mine"
-      - "--miner.threads=1"
-      - "--miner.etherbase=0x1bb90cde8a032cb4963813a5b4db4981afa5b9c6"
-      - "--http"
-      - "--http.addr=0.0.0.0"
-      - "--http.port=8545"
-      - "--http.api=admin,personal,eth,miner,debug,txpool,net,web3"
-      - "--http.corsdomain=*"
-      - "--http.vhosts=*"
-      - "--rpc.allow-unprotected-txs"
-
-  # deployer:
-  #   build:
-  #     context: "."
-  #     dockerfile: "docker/deployer/Dockerfile"
-  #   volumes:
-  #     - "./docker/geth/bin/:/root/bin"
-  #   command: ["median-deploy", "BATUSD", "BTCUSD", "ETHUSD", "KNCUSD", "MANAUSD", "0x1bb90cde8a032cb4963813a5b4db4981afa5b9c6", "0x3980aa37f838bec2e457445d943feb3af98ff036"]
-
   gofer:
     container_name: gofer.local
+    # image: omnia_omnia_relay:latest
     build:
       context: "."
       dockerfile: "Dockerfile"
@@ -55,36 +12,82 @@ services:
     volumes:
       - "./config/gofer.json:/etc/gofer.json"
 
-  spire_feed:
+  spire_feed1:
+    # image: omnia_omnia_relay:latest
     build:
       context: "."
       dockerfile: "Dockerfile"
     network_mode: "host"
-    container_name: spire_feed.local
+    container_name: spire_feed1.local
     entrypoint: [ "/usr/local/bin/spire" ]
     command: [ "-c", "/etc/spire.json", "agent", "-v", "info" ]
     volumes:
-      - "/home/usman/.ethereum/keystore/:/home/usman/.ethereum/keystore/"
+      - "/home/admin/.ethereum/keystore/:/home/admin/.ethereum/keystore/"
       - "./config/spire1.json:/etc/spire.json"
+  spire_feed2:
+    # image: omnia_omnia_relay:latest
+    build:
+      context: "."
+      dockerfile: "Dockerfile"
+    network_mode: "host"
+    container_name: spire_feed2.local
+    entrypoint: [ "/usr/local/bin/spire" ]
+    command: [ "-c", "/etc/spire.json", "agent", "-v", "info" ]
+    volumes:
+      - "/home/admin/.ethereum/keystore/:/home/admin/.ethereum/keystore/"
+      - "./config/spire2.json:/etc/spire.json"
+  spire_feed3:
+    # image: omnia_omnia_relay:latest
+    build:
+      context: "."
+      dockerfile: "Dockerfile"
+    network_mode: "host"
+    container_name: spire_feed3.local
+    entrypoint: [ "/usr/local/bin/spire" ]
+    command: [ "-c", "/etc/spire.json", "agent", "-v", "info" ]
+    volumes:
+      - "/home/admin/.ethereum/keystore/:/home/admin/.ethereum/keystore/"
+      - "./config/spire3.json:/etc/spire.json"
 
+  spire_feed4:
+    # image: omnia_omnia_relay:latest
+    build:
+      context: "."
+      dockerfile: "Dockerfile"
+    network_mode: "host"
+    container_name: spire_feed4.local
+    entrypoint: [ "/usr/local/bin/spire" ]
+    command: [ "-c", "/etc/spire.json", "agent", "-v", "info" ]
+    volumes:
+      - "/home/admin/.ethereum/keystore/:/home/admin/.ethereum/keystore/"
+      - "./config/spire4.json:/etc/spire.json"
+  spire_feed5:
+    # image: omnia_omnia_relay:latest
+    build:
+      context: "."
+      dockerfile: "Dockerfile"
+    network_mode: "host"
+    container_name: spire_feed5.local
+    entrypoint: [ "/usr/local/bin/spire" ]
+    command: [ "-c", "/etc/spire.json", "agent", "-v", "info" ]
+    volumes:
+      - "/home/admin/.ethereum/keystore/:/home/admin/.ethereum/keystore/"
+      - "./config/spire5.json:/etc/spire.json"        
   spire_relay:
+    # image: omnia_omnia_relay:latest
     build:
       context: "."
       dockerfile: "Dockerfile"
     container_name: spire_relay.local
     network_mode: "host"
-    depends_on:
-      - spire_feed
     entrypoint: [ "/usr/local/bin/spire" ]
     command: [ "-c", "/etc/spire.json", "agent", "-v", "info" ]
     volumes:
-      - "/home/usman/.ethereum/keystore/:/home/usman/.ethereum/keystore/"
-      - "./config/spire1.json:/etc/spire.json"
+      - "/home/admin/.ethereum/keystore/:/home/admin/.ethereum/keystore/"
+      - "./config/spire_relay.json:/etc/spire.json"
 
-  omnia_feed:
-    depends_on:
-      - gofer
-      - spire_feed
+  omnia_feed1:
+    # image: omnia_omnia_relay:latest
     build:
       context: "."
       dockerfile: "Dockerfile"
@@ -99,22 +102,114 @@ services:
       - "./config/spire1.json:/home/omnia/spire.json"
       - "./config/gofer.json:/home/omnia/gofer.json"
 
-      - "/home/usman/.ethereum/keystore/:/home/omnia/.ethereum/keystore/"
-      - "/home/usman/.ethereum/keystore/:/home/usman/.ethereum/keystore/"
+      - "/home/admin/.ethereum/keystore/:/home/omnia/.ethereum/keystore/"
+      - "/home/admin/.ethereum/keystore/:/home/admin/.ethereum/keystore/"
 
     environment:
-      SSB_KEYS: "/home/omnia/.ssb/secret"
-      SSB_CONF: "/home/omnia/.ssb/config"
-      SSB_HOST: "ssb-feed.local"
-      SSB_PORT: "8000"
       OMNIA_VERBOSE: "true"
       gofer: "/usr/local/bin/gofer"
-#      OMNIA_LOG_FORMAT: "json"
+
+  omnia_feed2:
+    depends_on:
+      - gofer
+    # image: omnia_omnia_relay:latest
+    build:
+      context: "."
+      dockerfile: "Dockerfile"
+    network_mode: "host"
+    volumes:
+      - "./bin:/opt/omnia/bin"
+      - "./lib:/opt/omnia/lib"
+      - "./exec:/opt/omnia/exec"
+      - "./test:/opt/omnia/test"
+
+      - "./config/omnia_feed2.json:/home/omnia/omnia.json"
+      - "./config/spire2.json:/home/omnia/spire.json"
+      - "./config/gofer.json:/home/omnia/gofer.json"
+
+      - "/home/admin/.ethereum/keystore/:/home/omnia/.ethereum/keystore/"
+      - "/home/admin/.ethereum/keystore/:/home/admin/.ethereum/keystore/"
+
+    environment:
+      OMNIA_VERBOSE: "true"
+      gofer: "/usr/local/bin/gofer"
+  omnia_feed3:
+    depends_on:
+      - gofer
+    # image: omnia_omnia_relay:latest
+    build:
+      context: "."
+      dockerfile: "Dockerfile"
+    network_mode: "host"
+    volumes:
+      - "./bin:/opt/omnia/bin"
+      - "./lib:/opt/omnia/lib"
+      - "./exec:/opt/omnia/exec"
+      - "./test:/opt/omnia/test"
+
+      - "./config/omnia_feed3.json:/home/omnia/omnia.json"
+      - "./config/spire3.json:/home/omnia/spire.json"
+      - "./config/gofer.json:/home/omnia/gofer.json"
+
+      - "/home/admin/.ethereum/keystore/:/home/omnia/.ethereum/keystore/"
+      - "/home/admin/.ethereum/keystore/:/home/admin/.ethereum/keystore/"
+
+    environment:
+      OMNIA_VERBOSE: "true"
+      gofer: "/usr/local/bin/gofer"
+
+  omnia_feed4:
+    depends_on:
+      - gofer
+    # image: omnia_omnia_relay:latest
+    build:
+      context: "."
+      dockerfile: "Dockerfile"
+    network_mode: "host"
+    volumes:
+      - "./bin:/opt/omnia/bin"
+      - "./lib:/opt/omnia/lib"
+      - "./exec:/opt/omnia/exec"
+      - "./test:/opt/omnia/test"
+      - "./config/omnia_feed4.json:/home/omnia/omnia.json"
+      - "./config/spire4.json:/home/omnia/spire.json"
+      - "./config/gofer.json:/home/omnia/gofer.json"
+      - "/home/admin/.ethereum/keystore/:/home/omnia/.ethereum/keystore/"
+      - "/home/admin/.ethereum/keystore/:/home/admin/.ethereum/keystore/"
+
+    environment:
+      OMNIA_VERBOSE: "true"
+      gofer: "/usr/local/bin/gofer"
+
+
+  omnia_feed5:
+    depends_on:
+      - gofer
+    # image: omnia_omnia_relay:latest
+    build:
+      context: "."
+      dockerfile: "Dockerfile"
+    network_mode: "host"
+    volumes:
+      - "./bin:/opt/omnia/bin"
+      - "./lib:/opt/omnia/lib"
+      - "./exec:/opt/omnia/exec"
+      - "./test:/opt/omnia/test"
+      - "./config/omnia_feed5.json:/home/omnia/omnia.json"
+      - "./config/spire5.json:/home/omnia/spire.json"
+      - "./config/gofer.json:/home/omnia/gofer.json"
+      - "/home/admin/.ethereum/keystore/:/home/omnia/.ethereum/keystore/"
+      - "/home/admin/.ethereum/keystore/:/home/admin/.ethereum/keystore/"
+
+    environment:
+      OMNIA_VERBOSE: "true"
+      gofer: "/usr/local/bin/gofer"
+
 
   omnia_relay:
     depends_on:
-      - geth
       - spire_relay
+    # image: omnia_omnia_relay:latest
     build:
       context: "."
       dockerfile: "Dockerfile"
@@ -128,14 +223,10 @@ services:
       - "../dapptools/src/seth/:/opt/seth/"
 
       - "./config/omnia_relay.json:/home/omnia/omnia.json"
-      - "./config/spire1.json:/home/omnia/spire.json"
-      - "./docker/keystore/:/home/omnia/.ethereum/keystore/"
-      - "/home/usman/.ethereum/keystore/:/home/usman/.ethereum/keystore/"
+      - "./config/spire_relay.json:/home/omnia/spire.json"
+      - "/home/admin/.ethereum/keystore/:/home/omnia/.ethereum/keystore/"
+      - "/home/admin/.ethereum/keystore/:/home/admin/.ethereum/keystore/"
     environment:
-      ETH_RPC_URL: "http://localhost:8545"
-      ETH_FROM: "<Wallet-address>"
-      ETH_GAS_SOURCE: "node"
-      ETH_MAXPRICE_MULTIPLIER: 1
       OMNIA_VERBOSE: "true"
 #      OMNIA_LOG_FORMAT: "json"
 networks:

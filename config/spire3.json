@@ -1,0 +1,28 @@
+{
+    "ethereum": {
+        "from": "0x354d4E6e258dE2e0136e2e3780b0CdF9560155Ec",
+        "keystore": "/home/admin/.ethereum/keystore",
+        "password": "/home/admin/.ethereum/keystore/.pass"
+    },
+    "transport": {
+        "libp2p": {
+            "directPeersAddrs": []
+        }
+    },
+    "feeds": [        
+        "0x7183f1C7BaF2cdf56e821A12C49ef9B276560c9A",
+        "0x86B5B8Fe2B467F733c0624e13b9Df08867d94B96",
+        "0x354d4E6e258dE2e0136e2e3780b0CdF9560155Ec",
+        "0x9c4B23734ebE05DD834157620F9E6215ae382223",
+        "0xB5A97E6269e400fE18aC7423aF46bBA1165c1E1f"
+    ],
+    "spire": {
+        "rpc": {
+            "address": "127.0.0.1:9021"
+        },
+        "pairs": [
+            "ETHUSD",
+            "BTCUSD"
+        ]
+    }
+}

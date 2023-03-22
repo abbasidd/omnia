@@ -1,0 +1,42 @@
+{
+  "mode": "relay",
+  "ethereum": {
+    "from": "0x354d4E6e258dE2e0136e2e3780b0CdF9560155Ec",
+    "keystore": "/home/admin/.ethereum/keystore",
+    "password": "/home/admin/.ethereum/keystore/.pass",
+    "network": "https://goerli.infura.io/v3/de82b2d602264e4fbc0929dec0c45baa",
+    "type": "https://goerli.infura.io/v3/de82b2d602264e4fbc0929dec0c45baa",
+    "gasPrice": {
+      "source": "node",
+      "maxPriceMultiplier": 2,
+      "tipMultiplier": 1,
+      "priority": "fast"
+    }
+  },
+  "sources": [],
+  "transports": [
+    "spire","ssb"
+  ],
+  "feeds":  [
+    "0x7183f1C7BaF2cdf56e821A12C49ef9B276560c9A",
+    "0x86B5B8Fe2B467F733c0624e13b9Df08867d94B96",
+    "0x354d4E6e258dE2e0136e2e3780b0CdF9560155Ec",
+    "0x9c4B23734ebE05DD834157620F9E6215ae382223",
+    "0xB5A97E6269e400fE18aC7423aF46bBA1165c1E1f"
+],
+  "options": {
+    "interval": 60,
+    "msgLimit": 35,
+    "verbose": true,
+    "logFormat": "text",
+    "setzerEthRpcUrl": "http://127.0.0.1:9989"
+  },
+  "pairs": {
+    "BTC/USD": {
+      "msgExpiration": 1800,
+      "oracle": "0x04946431bF40045cFf3Dbfd60A4d64454D08768a",
+      "oracleExpiration": 1800,
+      "oracleSpread": 0.0001
+    }
+  }
+}

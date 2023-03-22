@@ -21,8 +21,7 @@
             "address": "127.0.0.1:9019"
         },
         "pairs": [
-            "ETHUSD",
-            "BTCUSD"
+            "ETHUSD"
         ]
     }
 }

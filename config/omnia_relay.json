@@ -4,8 +4,8 @@
     "from": "0x354d4E6e258dE2e0136e2e3780b0CdF9560155Ec",
     "keystore": "/home/admin/.ethereum/keystore",
     "password": "/home/admin/.ethereum/keystore/.pass",
-    "network": "https://goerli.infura.io/v3/de82b2d602264e4fbc0929dec0c45baa",
-    "type": "https://goerli.infura.io/v3/de82b2d602264e4fbc0929dec0c45baa",
+    "network": "https://mainnet.infura.io/v3/de82b2d602264e4fbc0929dec0c45baa",
+    "type": "https://mainnet.infura.io/v3/de82b2d602264e4fbc0929dec0c45baa",
     "gasPrice": {
       "source": "node",
       "maxPriceMultiplier": 2,
@@ -34,7 +34,7 @@
   "pairs": {
     "BTC/USD": {
       "msgExpiration": 1800,
-      "oracle": "0x04946431bF40045cFf3Dbfd60A4d64454D08768a",
+      "oracle": "0x577179ecdbA868744b89E4503b47ee1703173edc",
       "oracleExpiration": 1800,
       "oracleSpread": 0.0001
     }

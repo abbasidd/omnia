@@ -5,16 +5,6 @@
 
 For more information on running oracles see: https://github.com/chronicleprotocol/oracles
 
-## Quickstart
-
-Some convenience targets for `make` are available. If you have Docker installed, you can do
-
-```
-make build          # build all the images
-make run            # run images after they're built
-make test           # build and run integration tests
-```
-
 ## Working with Docker
 
 We introduced Docker environment for local omnia development.
@@ -25,35 +15,13 @@ Please follow several steps to build and run it.
 
 NOTE: You have to build it from repo root.
 
-```bash
-$ docker build -t omnia -f docker/omnia/Dockerfile .
-```
-
-Running omnia with your local environment:
-
-```bash
-$ doc run -it --rm -v "$(pwd)"/lib:/home/omnia/lib -v "$(pwd)"/test:/home/omnia/test omnia /bin/bash
-```
-
-It will start bash session into docker comtainer with mounted `lib` and `test` folders.
+`docker build -t omnia .` OR `docker-compose build`
 
 To run `omnia` in container from prev command you can use `omnia` command:
 
 ```bash
 $ omnia
 Importing configuration from /home/omnia/config/feed.json...
-```
-
-## SSB Image requirements
-
-`node:lts-alpine` has some major changes and now it does not include `python` and `make` anymore.
-So we will have to rework SSB images.
-
-For now it requires special Docker `node` base image.
-So before building this image run command:
-
-```bash
-$ doc pull node:lts-alpine3.14@sha256:366c71eebb0da62a832729de2ffc974987b5b00ab25ed6a5bd8d707219b65de4
 ```
 
 ## Docker compose
@@ -63,14 +31,6 @@ Right now it contains `omnia_feed` container.
 It contains working feed configuration + spire integration.
 
 And `spire` container with configured spire agent that will be called from `omnia_feed`.
-
-**Where to take `chroniclelabs/spire:latest` image ?**
-For now you have to build it manually from [Oracle Suite](https://github.com/makerdao/oracle-suite) repo.
-Command for building image:
-
-```bash
-$ docker build -t chroniclelabs/spire:latest -f Dockerfile-spire .
-```
 
 Example of usage: 
 
@@ -84,102 +44,6 @@ $ docker-compose up -d spire
 
 ```bash
 $ docker-compose run --rm omnia_feed /bin/bash
-```
-
-## Running Unit Tests
-
-For simplicity we create unit tests runner inside docker container. 
-So to run unit tests in fresh environment you can use this command: 
-
-```bash
-$ docker-compose -f .github/docker-compose-unit-tests.yml run --rm omnia_unit_tests
-```
-
-It will create fresh omnia container, mount all your local sources and run tests from `test/units` folder.
-Example output: 
-
-```bash
-Creating github_omnia_unit_tests_run ... done
-======================================
-Running: /home/omnia/test/units/config.sh
-======================================
-TAP version 13
-1..10
-ok 1 - importGasPrice should correctly parse values > run importGasPrice {"from":"0x","keystore":"","password":"","network":"mainnet","gasPrice":{"source":"node","multiplier":1,"priority":"fast"}}
-ok 2 - ETH_GAS_SOURCE should have value: ethgasstation > match ^node
-ok 3 - ETH_MAXPRICE_MULTIPLIER should have value: 1 > match ^1$
-ok 4 - ETH_TIP_MULTIPLIER should have value: 1 > match ^1$
-ok 5 - ETH_GAS_PRIORITY should have value: slow > match ^fast
-...
-```
-
-### Running E2E Tests
-
-For E2E tests you need Docker to be installed and some basic predefined tools.
-We use `smocker` for mocking Exchange API requests/responses and local `geth` for omnia relay tests.
-To setup environment you can use this command:
-
-```bash
-$ docker-compose -f .github/docker-compose-e2e-tests.yml run omnia_e2e 
-```
-
-### E2E Tests for Development
-
-First of all for E2E tests we are using special image `ghcr.io/chronicleprotocol/omnia:dev`.
-And to use it with your locl omnia version - you have to build it by yourself.
-
-```bash
-$ docker build -t ghcr.io/chronicleprotocol/omnia:dev .
-```
-
-If you already have this image on your local machine - you have to rebuild it!
-
-```bash
-$ docker rmi ghcr.io/chronicleprotocol/omnia:dev
-```
-
-For tests development process we created additional image `omnia_e2e_dev` that will be built
-from your current environment and will link local `lib`, `exec` and `transport-e2e` volumes.
-**NOTE:** This image will be built on `ghcr.io/chronicleprotocol/omnia:dev`, see `test/e2e/Dockerfile`.
-
-Run it:
-
-```bash
-$ docker-compose -f .github/docker-compose-e2e-tests.yml run --rm omnia_e2e_dev
-```
-
-It will start `bash` session inside omnia dev container with mounted folders.
-From here you might run E2E tests using command: 
-
-```bash
-$ go test -v -p 1 -parallel 1 -cpu 1 ./...
-```
-
-#### Running omnia feed tests
-
-```bash
-$ go test -v -p 1 -parallel 1 -cpu 1 ./feed
-```
-
-#### Running omnia Relayer tests
-
-```bash
-$ go test -v -p 1 -parallel 1 -cpu 1 ./relay
-```
-
-**NB !!!**
-If our machine wouldn't be able to build `omnia_e2e_dev` with error: 
-
-```bash
-Building omnia_e2e_dev
-Step 1/16 : FROM ghcr.io/chronicleprotocol/omnia:dev
-ERROR: Service 'omnia_e2e_dev' failed to build : Head "https://ghcr.io/v2/chronicleprotocol/omnia/manifests/dev": denied
-```
-
-It mean you have to pull `ghcr.io/chronicleprotocol/omnia:dev` or build it locally using command: 
-
-```bash
-$ docker build -t ghcr.io/chronicleprotocol/omnia:dev .
 ```
 
 ## Docker integration
@@ -200,9 +64,6 @@ If you need to build omnia with custom version you can use [Docker ARGs](https:/
 
 Example: 
 
-```bash
-$ docker build --build-arg ETHSIGN_REF=tags/ethsign/0.16.0 --build-arg SETZER_REF=8819397c3ebd7cf48fac7a3f5ce29985404f9354 -t omnia_custom .
-```
 
 #### Omnia Configuration
 
@@ -219,25 +80,75 @@ Dockerized Omnia default configuration:
 
 To set custom configuration values use [ENV (environment variables)](https://docs.docker.com/engine/reference/run/#env-environment-variables)
 
-Example:
-
-```bash
-$ docker run -e "ETH_GAS=28282828282" -e "OMNIA_INTERVAL=15" ghcr.io/chronicleprotocol/omnia:latest
-```
-
 Configuration files might be provided by mounting it into Docker container. 
 
-Example: 
 
-Replacing existing file:
 
-```bash
-$ docker run -v $(pwd)/omnia_config.json:/home/omnia/omnia.json ghcr.io/chronicleprotocol/omnia:latest
+
+### Configuring Spire
+
+>spire is installed through docker.
+
+This is based on libp2p which is a peer-to-peer networking protocol designed to enable decentralized communication and file sharing over the internet. It is a modular, open-source networking protocol that allows nodes to communicate with each other directly, without the need for a central server or infrastructure.
+
+
+ One of these attributes is the "transport" attribute, which uses libp2p to establish direct peer-to-peer connections between nodes without relying on a central server or infrastructure, So we have to give the listenAddrs for example `/ip4/192.168.18.109/tcp/37705/p2p/12D3KooWPFpaE13gph8p6jdNGJv1M6fwDro8kdst53MUzVpuSJUL` i.e **"\<ip-version>/\<host>/\<protocol>/\<port>/\<type>/\<peer_id>"** w.r.t the quorum of median.To obtain the peer addresses, you can check the logs of Spire using journalctl, as Spire runs as a systemd service. Once you have the peer addresses, then ** you can add them to the "directPeersAddrs" array to connect peers in the "transport" attribute of the Spire configuration file. **
+
+```
+sudo journalctl -u <spire-agent.service> -n 100 -b -f
 ```
 
-Setting new configuration file:
-You will have to rewrite `OMNIA_CONFIG` env var.
 
-```bash
-$ docker run -v $(pwd)/omnia_config.json:/home/omnia/omnia_config.json -e OMNIA_CONFIG=/home/omnia/omnia_config.json ghcr.io/chronicleprotocol/omnia:latest
+**add peerIDs in this attr to connect spire with each other**
+```json 
+"transport":{
+      "libp2p": {
+        "directPeersAddrs":[]}}
+  ```
+
+### command to run spire
 ```
+spire agent -c <CONFIG_PATH> --log.verbosity debug
+```
+### command to run spire systemd
+```
+systemctl start <spire-agent.service>
+
+```
+
+### command to run ssb-server systemd
+```
+systemctl start <ssb-server.service>
+
+```
+
+The installed Scuttlebot config can be found in `~/.ssb.config`, more details
+about the [Scuttlebot config](https://github.com/ssbc/ssb-config#configuration).
+
+### Creating and Accepting SSB Invites 
+
+Open the systemd file of ssb-server.service to lookup the binary of ssb-server.
+
+Creating an SSB Invite
+
+`ssb-server invite.create 1` means `<path of ssb-server> invite.create 1`
+
+This will output a JSON object containing the invite code.
+
+Accepting an SSB Invite
+
+To accept an SSB invite without using Docker, open a terminal window and run the following command:
+
+`ssb-server invite.accept <invite_code>`
+
+Replace <invite_code> with the invite code obtained in the previous step.
+
+
+### how it will work
+
+ we should run the 3 feeds with the 3 spires 
+ every feed should have their own omnia
+ means the config file have the right omnia addr pasted in feed object of spire's config
+
+
+

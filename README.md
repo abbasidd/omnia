@@ -37,13 +37,7 @@ Example of usage:
 1. Starting Spire Agent
 
 ```bash
-$ docker-compose up -d spire
-```
-
-2. Running omnia with bash:
-
-```bash
-$ docker-compose run --rm omnia_feed /bin/bash
+$ docker-compose up -d spire omnia gofer
 ```
 
 ## Docker integration
